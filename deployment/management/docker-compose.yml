@@ -1,0 +1,75 @@
+version: "2.4"
+services:
+  php:
+    container_name: "${SERVICE_NAME}-php"
+    build: .docker
+    image: app
+    depends_on:
+      - postgres
+    volumes:
+      - ../../:/var/www/html
+      - ./.docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    restart: always
+    networks:
+      - user-management-network
+    env_file:
+      - ./.env
+    environment:
+     - XDEBUG_MODE=coverage
+
+  nginix:
+    container_name: "${SERVICE_NAME}-nginx"
+    image: nginx:alpine
+    ports:
+      - "8003:83"
+    volumes:
+      - .docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - .docker/nginx/:/var/log/nginx/
+      - ../../:/var/www/html
+    depends_on:
+      - php
+    restart: always
+    networks:
+      - user-management-network
+    env_file:
+      - ./.env
+    healthcheck:
+      test: [ "CMD","curl","-f","http://localhost:8003" ]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+
+  postgres:
+    container_name: "${SERVICE_NAME}-postgres"
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+    - /opt/user-management/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+    env_file:
+      - .env
+    networks:
+      - user-management-network
+    healthcheck:
+      test: [ "CMD","mysqladmin","ping" ]
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: "${SERVICE_NAME}-pgadmin"
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: raj@nola.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+
+
+
+networks:
+  user-management-network:
+    driver: bridge
+

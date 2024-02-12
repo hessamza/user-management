@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="/var/www/html/phpunit.xml" tests="1" assertions="2" errors="0" failures="0" skipped="0" time="0.334612">
+    <testsuite name="Project Test Suite" tests="1" assertions="2" errors="0" failures="0" skipped="0" time="0.334612">
+      <testsuite name="App\Tests\API\ApiTest" file="/var/www/html/tests/API/ApiTest.php" tests="1" assertions="2" errors="0" failures="0" skipped="0" time="0.334612">
+        <testcase name="testGetCars" file="/var/www/html/tests/API/ApiTest.php" line="21" class="App\Tests\API\ApiTest" classname="App.Tests.API.ApiTest" assertions="2" time="0.334612"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>
